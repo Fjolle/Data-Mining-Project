@@ -11,6 +11,22 @@ output: html_document
 The perception of corruption in a country is a crucial component when it comes to the happiness of the people and their healthy life expectancy. However, corruption is not the only indicator of happiness. Other variables such as social support, freedom to make life choices, generosity as well as the log GDP per capita also play a key role on the happiness of a nation. 
 
 
+          •Regional_indicator	
+          •Logged_GDP_per_capita	
+          •Social_support
+          •Healthy_life_expectancy
+          •Freedom_to_make_life_choices
+          •Generosity
+          •Perceptions_of_corruption	
+          •Explained_by_Log_GDP_per_capita
+          •Explaine_by_Social_support
+          •Explained_by_Healthy_life_expectancy
+          •Explained_by_Freedom_to_make_life_choices
+          •Explained_by_Generosity
+          •Explained_by_Perceptions_of_corruption
+
+
+
 Sources: https://worldhappiness.report/
 
 
