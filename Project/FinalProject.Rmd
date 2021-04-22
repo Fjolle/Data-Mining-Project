@@ -5,11 +5,18 @@ date: "12/04/2021"
 output: html_document
 ---
 
+#ABSTRACT 
+
 
 #Introduction
 
-The perception of corruption in a country is a crucial component when it comes to the happiness of the people and their healthy life expectancy. However, corruption is not the only indicator of happiness. Other variables such as social support, freedom to make life choices, generosity as well as the log GDP per capita also play a key role on the happiness of a nation. 
+The perception of corruption in a country is a crucial component when it comes to the happiness of the people and their healthy life expectancy. However, corruption is not the only indicator of happiness. Other variables such as social support, freedom to make life choices, generosity as well as the log GDP per capita also play a key role on the happiness of a nation. (1)
 
+In order to construct an accurate statistical model that accurately predicts happiness levels across the world I apply four different statistical models based on the variable Healthy_life_expectancy: The linear model, Lasso, Random Forest and Boosting. Predictions using each one of the above models are then compared to observe which one provides us with the best performance. I analyze different Healthy_life_expectancy broken-down regions of the world in order to observe the score of the factors adding to the population's happiness level. Hence, this paper is structured in the following way: In the first section I show Healthy life expextancy based on different happiness indicators broken down by individual regions of the world, and I compare results. In the second section I build four different statistical models: The hand-built linear model, the lasso model, bagging and random forest. In the third section I then compare the four models and based on my findindings conclude which one of the four statistical models is the most appropriate for analysis. Section four concludes. 
+
+The dataset used in this project is data from the Gallup Poll and The World Happiness Report 2021. The dataset has its shortcomings, however. That is, the dataset is based on the year 2021 in the midst of the COVID-19 pandemic. All the variables in the dataset have the potential of being affected by this historic event in comparison to other "normal" years without a pandemic. For instance, the unfortunate death of many seniors may cause the costs of Social Security to drop in the short-run. However, the elderly partake in a very small percentage of social security in comparison to the entire working population. As more and more people lost their jobs, they stopped contributing to the Social Security Program through payroll taxes, which is a major funding source for the program. Thus, in the longer run this may actually pivot into the opposite direction.(2) As a result, the healthy life expectancy based on social security will also be affected.  That being said, the dataset it sufficient to enable me to show statistical model results.
+
+The following variables are used for the analysis that follows:
 
           •Regional_indicator	
           •Logged_GDP_per_capita	
@@ -25,9 +32,13 @@ The perception of corruption in a country is a crucial component when it comes t
           •Explained_by_Generosity
           •Explained_by_Perceptions_of_corruption
 
-
-
-Sources: https://worldhappiness.report/
+Sources:(1) https://worldhappiness.report/
+Sources:(2)https://www.inquirer.com/health/coronavirus/how-will-covid-19-affect-social-security-medicare-disability-20210301.html
+Sources:(3)
+Sources:(4)
+Sources:(5)
+Sources:(6)
+Sources:(7)
 
 
 ```{r , echo = FALSE, warning=FALSE}
@@ -37,14 +48,9 @@ happiness <- na.omit(world_happiness_report_2021)
 library(tidyverse)
 ```
 
-
-In order to construct an accurate statictical model that accurately predicts happiness levels across
-the world I apply four different Healthy_life_expectancy statistical models: The linear model, Lasso, Random Forest and Boosting.
-Predictions using each one of the above models are then compared to observe which one provides us with
-the best performance. I analyze different Healthy_life_expectancy broken-down regions of the world in order to observe the scoreof the factors adding to the population's happiness level.
+#Healthy life expextancy based on different happiness indicators broken down by region
 
 #Healthy life expectancy explained by perceptions of corruption
-
 ```{r, echo = FALSE, warning=FALSE}
 happiness <- read.csv("https://raw.githubusercontent.com/Fjolle/Data-Mining-Project/main/Data/world-happiness-report-2021.csv")
 happiness %>%
@@ -131,7 +137,6 @@ lm_happiness = lm(Healthy_life_expectancy ~ Regional_indicator + Explaine_by_Soc
                     Regional_indicator*Explained_by_Freedom_to_make_life_choices+
                     Regional_indicator*Explained_by_Generosity+
                     Regional_indicator*Explained_by_Perceptions_of_corruption,data=happiness)
-
 ```
 
 
