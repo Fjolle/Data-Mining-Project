@@ -1,58 +1,42 @@
 ---
 title: "FinalProject"
 author: "Fjolle Gjonbalaj"
-date: "12/04/2021"
-output: html_document
+date: "13/05/2021"
+output:
+  pdf_document: default
+  html_document: default
 ---
 
-#ABSTRACT 
 
-
-#Introduction
-
-The perception of corruption in a country is a crucial component when it comes to the happiness of the people and their healthy life expectancy. However, corruption is not the only indicator of happiness. Other variables such as social support, freedom to make life choices, generosity as well as the log GDP per capita also play a key role on the happiness of a nation. (1)
-
-In order to construct an accurate statistical model that accurately predicts happiness levels across the world I apply four different statistical models based on the variable Healthy_life_expectancy: The linear model, Lasso, Random Forest and Boosting. Predictions using each one of the above models are then compared to observe which one provides us with the best performance. I analyze different Healthy_life_expectancy broken-down regions of the world in order to observe the score of the factors adding to the population's happiness level. Hence, this paper is structured in the following way: In the first section I show Healthy life expextancy based on different happiness indicators broken down by individual regions of the world, and I compare results. In the second section I build four different statistical models: The hand-built linear model, the lasso model, bagging and random forest. In the third section I then compare the four models and based on my findindings conclude which one of the four statistical models is the most appropriate for analysis. Section four concludes. 
-
-The dataset used in this project is data from the Gallup Poll and The World Happiness Report 2021. The dataset has its shortcomings, however. That is, the dataset is based on the year 2021 in the midst of the COVID-19 pandemic. All the variables in the dataset have the potential of being affected by this historic event in comparison to other "normal" years without a pandemic. For instance, the unfortunate death of many seniors may cause the costs of Social Security to drop in the short-run. However, the elderly partake in a very small percentage of social security in comparison to the entire working population. As more and more people lost their jobs, they stopped contributing to the Social Security Program through payroll taxes, which is a major funding source for the program. Thus, in the longer run this may actually pivot into the opposite direction.(2) As a result, the healthy life expectancy based on social security will also be affected.  That being said, the dataset it sufficient to enable me to show statistical model results.
-
-The following variables are used for the analysis that follows:
-
-          •Regional_indicator	
-          •Logged_GDP_per_capita	
-          •Social_support
-          •Healthy_life_expectancy
-          •Freedom_to_make_life_choices
-          •Generosity
-          •Perceptions_of_corruption	
-          •Explained_by_Log_GDP_per_capita
-          •Explaine_by_Social_support
-          •Explained_by_Healthy_life_expectancy
-          •Explained_by_Freedom_to_make_life_choices
-          •Explained_by_Generosity
-          •Explained_by_Perceptions_of_corruption
-
-Sources:(1) https://worldhappiness.report/
-Sources:(2)https://www.inquirer.com/health/coronavirus/how-will-covid-19-affect-social-security-medicare-disability-20210301.html
-Sources:(3)
-Sources:(4)
-Sources:(5)
-Sources:(6)
-Sources:(7)
-
-
-```{r , echo = FALSE, warning=FALSE}
+```{r ,include=FALSE, echo=FALSE,warning=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-happiness <- read.csv("https://raw.githubusercontent.com/Fjolle/Data-Mining-Project/main/Data/world-happiness-report-2021.csv")
-happiness <- na.omit(world_happiness_report_2021)
 library(tidyverse)
+library(gamlr)
+library(tidyverse)
+library(kableExtra)
+library(randomForest)
+library(gbm)
+library(pdp)
+library(ggplot2)
+library(glmnet)
+library(data.table)
+library(rsample)
+library(modelr)
+library(mosaic)
+library(randomForest)
+library(foreach)
+library(gamlr)
+library(rsample)
+library(jtools)
+happiness <- read.csv("https://raw.githubusercontent.com/Fjolle/Data-Mining-Project/main/Data/world-happiness-report-2021.csv")
 ```
+
+
 
 #Healthy life expextancy based on different happiness indicators broken down by region
 
 #Healthy life expectancy explained by perceptions of corruption
 ```{r, echo = FALSE, warning=FALSE}
-happiness <- read.csv("https://raw.githubusercontent.com/Fjolle/Data-Mining-Project/main/Data/world-happiness-report-2021.csv")
 happiness %>%
   group_by(Regional_indicator) %>%
   ggplot() +
@@ -60,7 +44,7 @@ happiness %>%
   color = Regional_indicator)) +
   facet_wrap(~ Regional_indicator, scales = "free") + 
   labs(x = "Regional Indicator", y = "Average Life Expectancy",
-       title = "Figure 1: Healthy Life Expectancy based on Freedom to make life choices",
+       title = "Figure 1: Healthy Life Expectancy based on Perception of Corruption",
        caption = "Data from Gallup World Poll")+
   theme_minimal()
 ```
@@ -68,14 +52,13 @@ happiness %>%
 
 #Healthy life expectancy explained by social support
 ```{r, echo = FALSE, warning=FALSE}
-happiness <- read.csv("https://raw.githubusercontent.com/Fjolle/Data-Mining-Project/main/Data/world-happiness-report-2021.csv")
 happiness %>%
   group_by(Regional_indicator) %>%
   ggplot() +
   geom_line(aes(y = Healthy_life_expectancy, x = Social_support, color = Regional_indicator)) +
   facet_wrap(~ Regional_indicator, scales = "free") + 
   labs(x = "Regional Indicator", y = "Average Life Expectancy",
-       title = "Figure 2:Healthy Life Expectancy based on Freedom to make life choices",
+       title = "Figure 2:Healthy Life Expectancy based on Social Support",
        caption = "Data from Gallup World Poll")+
   theme_minimal()
 ```
@@ -83,7 +66,6 @@ happiness %>%
 
 #Healthy life expectancy explained by freedom to make life choices
 ```{r, echo = FALSE, warning=FALSE}
-happiness <- read.csv("https://raw.githubusercontent.com/Fjolle/Data-Mining-Project/main/Data/world-happiness-report-2021.csv")
 happiness %>%
   group_by(Regional_indicator) %>%
   ggplot() +
@@ -98,14 +80,13 @@ happiness %>%
 
 #Healthy life expectancy explained by generosity
 ```{r, echo = FALSE, warning=FALSE}
-happiness <- read.csv("https://raw.githubusercontent.com/Fjolle/Data-Mining-Project/main/Data/world-happiness-report-2021.csv")
 happiness %>%
   group_by(Regional_indicator) %>%
   ggplot() +
   geom_line(aes(y = Healthy_life_expectancy, x = Explained_by_Generosity, color = Regional_indicator)) +
   facet_wrap(~ Regional_indicator, scales = "free") + 
   labs(x = "Regional Indicator", y = "Average Life Expectancy",
-       title = "Figure 4: Healthy Life Expectancy based on Freedom to make life choices",
+       title = "Figure 4: Healthy Life Expectancy based on Generosity",
        caption = "Data from Gallup World Poll")+
   theme_minimal()
 ```
@@ -113,14 +94,13 @@ happiness %>%
 
 #Healthy life expectancy explained by log GDP per capita
 ```{r, echo = FALSE, warning=FALSE}
-happiness <- read.csv("https://raw.githubusercontent.com/Fjolle/Data-Mining-Project/main/Data/world-happiness-report-2021.csv")
 happiness %>%
   group_by(Regional_indicator) %>%
   ggplot() +
   geom_line(aes(y = Healthy_life_expectancy, x = Explained_by_Log_GDP_per_capita, color = Regional_indicator)) +
   facet_wrap(~ Regional_indicator, scales = "free") + 
   labs(x = "Regional Indicator", y = "Average Life Expectancy",
-       title = "Figure 5: Healthy Life Expectancy based on Freedom to make life choices",
+       title = "Figure 5: Healthy Life Expectancy based on log GDP per Capita",
        caption = "Data from Gallup World Poll")+
   theme_minimal()
 ```
@@ -128,21 +108,12 @@ happiness %>%
 
 # First Model: Hand-Built Linear Model
 ```{r, echo = FALSE, warning=FALSE}
-happiness <- read.csv("https://raw.githubusercontent.com/Fjolle/Data-Mining-Project/main/Data/world-happiness-report-2021.csv")
-lm_happiness = lm(Healthy_life_expectancy ~ Regional_indicator + Explaine_by_Social_support+
-                    Explained_by_Log_GDP_per_capita+Explained_by_Freedom_to_make_life_choices+ 
-                    Explained_by_Generosity+Explained_by_Perceptions_of_corruption+
-                    Regional_indicator*Explaine_by_Social_support+
-                    Regional_indicator*Explained_by_Log_GDP_per_capita+
-                    Regional_indicator*Explained_by_Freedom_to_make_life_choices+
-                    Regional_indicator*Explained_by_Generosity+
-                    Regional_indicator*Explained_by_Perceptions_of_corruption,data=happiness)
+lm_happiness = lm(Healthy_life_expectancy ~ Regional_indicator + Explaine_by_Social_support+                    Explained_by_Log_GDP_per_capita+Explained_by_Freedom_to_make_life_choices+                     Explained_by_Generosity+Explained_by_Perceptions_of_corruption+Regional_indicator*Explaine_by_Social_support+Regional_indicator*Explained_by_Log_GDP_per_capita+Regional_indicator*Explained_by_Freedom_to_make_life_choices+Regional_indicator*Explained_by_Generosity+Regional_indicator*Explained_by_Perceptions_of_corruption,data=happiness)
 ```
 
 
 #Second Model: Lasso 
 ```{r, echo = FALSE, warning=FALSE}
-happiness <- read.csv("https://raw.githubusercontent.com/Fjolle/Data-Mining-Project/main/Data/world-happiness-report-2021.csv")
 library(glmnet)
 
 x = model.matrix(Healthy_life_expectancy~Regional_indicator+Explaine_by_Social_support+
@@ -228,17 +199,15 @@ kable(RMSEMeans, col.names = c("Mean RMSE"), caption = "Mean RMSE",  format_capt
 ```
 
 
+
 ##Bagging
 ```{r, echo = FALSE, warning=FALSE}
-happiness <- read.csv("https://raw.githubusercontent.com/Fjolle/Data-Mining-Project/main/Data/world-happiness-report-2021.csv")
 library(randomForest)
 set.seed(1)
 happyBagging = randomForest(Healthy_life_expectancy~Regional_indicator+Explaine_by_Social_support+
                               Explained_by_Log_GDP_per_capita+Explained_by_Freedom_to_make_life_choices+ 
                               Explained_by_Generosity+Explained_by_Perceptions_of_corruption, data = happiness_train, mtry=7, importance=TRUE)
 happyBagging
-
-
 yhat_happyBagging = predict(happyBagging, newdata = happiness_test)
 plot(yhat_happyBagging, happiness_test$Healthy_life_expectancy, xlab = "Predicted Values for Healthy life expectancy: Bagging", ylab = "Healthy_life_expectancy")
 title("Comparison between Bagging Predicted Healthy life expectancy and Actual Healthy life expectancy")
@@ -247,7 +216,6 @@ title("Comparison between Bagging Predicted Healthy life expectancy and Actual H
 
 #Random Forest
 ```{r, echo = FALSE, warning=FALSE}
-happiness <- read.csv("https://raw.githubusercontent.com/Fjolle/Data-Mining-Project/main/Data/world-happiness-report-2021.csv")
 set.seed(1)
 happyRandomForest = randomForest(Healthy_life_expectancy~Regional_indicator+Explaine_by_Social_support+
                                    Explained_by_Log_GDP_per_capita+Explained_by_Freedom_to_make_life_choices+ 
@@ -261,9 +229,10 @@ title("Comparison between Random Forest Predicted Healthy life expectancy and Ac
 
 
 
+
+
 ### Comparison of all 4 Predictive Models: Hand-Built Linear Model, Lasso, Bagging and Random Forest:
 ```{r, echo = FALSE, warning=FALSE}
-happiness <- read.csv("https://raw.githubusercontent.com/Fjolle/Data-Mining-Project/main/Data/world-happiness-report-2021.csv")
 library(foreach)
 N=nrow(happiness)
 K=3
@@ -376,6 +345,6 @@ greenbuildRandomForest2 = randomForest(Healthy_life_expectancy~Regional_indicato
                                          Explained_by_Generosity+Explained_by_Perceptions_of_corruption, data = happiness,
                                        mtry=4, importance=TRUE)
 VariableImp = as.data.table(importance(greenbuildRandomForest2), keep.rownames = TRUE)
-kable(VariableImp, caption = "**Table 1.4 Variable Importance in Random Forest Model**", col.names = c("Predictor", "% Increase in MSE", "Increase in Node Purity"),  format_caption = c("italic", "underline")) %>%
+kable(VariableImp, caption = " Variable Importance in Random Forest Model", col.names = c("Predictor", "% Increase in MSE", "Increase in Node Purity"),  format_caption = c("italic", "underline")) %>%
   kable_styling(bootstrap_options = "striped", full_width = F)
 ```
